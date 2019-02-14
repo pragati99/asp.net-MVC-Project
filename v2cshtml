@@ -1,0 +1,386 @@
+
+@model IEnumerable<FleetPride2.Models.FleetPride>
+
+@{
+    Page.Title = "FleetPride Arrows";
+
+    Layout = null;
+    WebGrid webGrid = new WebGrid(source: Model, canPage: true, canSort: true, rowsPerPage: 100, ajaxUpdateContainerId: "webGrid", ajaxUpdateCallback: "setArrows");
+}
+
+@functions {
+    public static string Sorter(string columnName, string columnHeader, WebGrid webGrid)
+    {
+        return string.Format("{0} {1}", columnHeader, webGrid.SortColumn == columnName ?
+            webGrid.SortDirection == SortDirection.Ascending ? "▲" :"▼" : string.Empty);
+    }
+}
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        .Grid {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+
+
+            .Grid th {
+                background-color: #F7F7F7;
+                font-weight: bold;
+            }
+
+            .Grid th, .Grid td {
+                padding: 5px;
+                text-align: center;
+                border: 1px solid #ccc;
+            }
+
+            .Grid, .Grid table td {
+                border: 0px solid #ccc;
+            }
+
+                .Grid th a, .Grid th a:visited {
+                    color: #333;
+                    text-align: center;
+                }
+    </style>
+</head>
+<body>
+    <center>
+        <br />
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td style="width: 150px">
+                    ShipDate:<br />
+                    <input type="text" id="txtshipdate" style="width:140px" />
+                </td>
+                <td style="width: 150px">
+                    Route:<br />
+                    <input type="text" id="txtroute" style="width:140px" />
+                </td>
+
+                <td style="width: 150px">
+                    Master Mode:<br />
+                    <input type="text" id="txtmastermode" style="width:140px" />
+                </td>
+
+                <td style="width: 150px">
+                    Total Pallets:<br />
+                    <input type="text" id="txttotalpallets" style="width:140px" />
+                </td>
+
+                <td style="width: 150px">
+                    Total Weight:<br />
+                    <input type="text" id="txttotalweight" style="width:140px" />
+                </td>
+
+                <td style="width: 150px">
+                    Total Cube:<br />
+                    <input type="text" id="txttotalcube" style="width:140px" />
+                </td>
+
+                <td style="width: 150px">
+                    Capacity Weight:<br />
+                    <input type="text" id="txtcapacityweight" style="width:140px" />
+                </td>
+
+                <td style="width: 100px">
+                    <br />
+                    <input type="button" id="btnAdd" value="Add" />
+                    <input type="button" id="btnfilter" value="Filter" />
+                </td>
+            </tr>
+        </table>
+        <br />
+        <hr />
+
+        <div id="gridContainer">
+            <div id="webGrid">
+                @webGrid.GetHtml(
+                  htmlAttributes: new { @id = "WebGrid", @class = "Grid" },
+
+                    headerStyle: "header",
+                  columns: webGrid.Columns(
+
+               webGrid.Column(header:"Id", format:@<span class="label">@item.Id</span>, style: "Id"),
+
+               webGrid.Column(header: "ShipDate", format:@<span>
+               <span class="label">@item.ShipDate</span>
+               <input class="text" type="text" value="@item.ShipDate" style="display:none" />
+               </span>, style: "ShipDate"),
+
+               webGrid.Column(header: "ROUTE", format:@<span>
+               <span class="label">@item.ROUTE</span>
+               <input class="text" type="text" value="@item.ROUTE" style="display:none" />
+               </span>, style: "ROUTE"),
+
+              webGrid.Column(header: "MASTER_MODE", format:@<span>
+              <span class="label">@item.MASTER_MODE</span>
+              <input class="text" type="text" value="@item.MASTER_MODE" style="display:none" />
+              </span>, style: "MASTER_MODE"),
+
+              webGrid.Column(header: "TotalPallets", format:@<span>
+              <span class="label">@item.TotalPallets</span>
+              <input class="text" type="text" value="@item.TotalPallets" style="display:none" />
+              </span>, style: "TotalPallets"),
+
+                webGrid.Column(header: "TotalWeight", format:@<span>
+                <span class="label">@item.TotalWeight</span>
+                <input class="text" type="text" value="@item.TotalWeight" style="display:none" />
+                </span>, style: "TotalWeight"),
+
+                webGrid.Column(header: "TotalCube", format:@<span>
+                <span class="label">@item.TotalCube</span>
+                <input class="text" type="text" value="@item.TotalCube" style="display:none" />
+                </span>, style: "TotalCube"),
+
+                webGrid.Column(header: "CapacityWeight", format:@<span>
+                <span class="label">@item.CapacityWeight</span>
+                <input class="text" type="text" value="@item.CapacityWeight" style="display:none" />
+                </span>, style: "CapacityWeight"),
+
+
+                webGrid.Column(format:@<span class="link">
+                <a class="Edit" href="javascript:;">Edit</a>
+                <a class="Update" href="javascript:;" style="display:none">Update</a>
+                <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                <a class="Delete" href="javascript:;">Delete</a>
+
+                      
+            </span>)
+
+))
+                @Html.Hidden("dir", webGrid.SortDirection) @Html.Hidden("col", webGrid.SortColumn)
+
+                <script type="text/javascript">
+
+                    function setArrows() {
+                        var dir = $('#dir').val();
+                        var col = $('#col').val();
+                        var header = $('th a[href*=' + col + ']');
+                        if (dir == 'Ascending') {
+                            header.text(header.text() + ' ▲');
+                        }
+                        if (dir == 'Descending') {
+                            header.text(header.text() + ' ▼');
+                        }
+                    };
+
+                </script>
+
+
+            </div>
+        </div>
+        <br />
+
+
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+
+
+        <script type="text/javascript">
+
+            $(function () {
+                var row = $("#WebGrid TBODY tr:eq(0)");
+                if ($("#WebGrid TBODY tr").length > 1) {
+                    row.remove();
+                } else {
+                    row.find(".label").html("");
+                    row.find(".text").val("");
+                    row.find(".link").hide();
+                }
+            });
+
+            function AppendRow(row, Id, ShipDate, ROUTE, MASTER_MODE, TotalPallets, TotalWeight, TotalCube, CapacityWeight) {
+                //Bind Id.
+                $(".Id", row).find(".label").html(Id);
+
+                //Bind Shipdate.
+                $(".ShipDate", row).find(".label").html(ShipDate);
+                $(".ShipDate", row).find(".text").val(ShipDate);
+
+                //Bind ROUTE.
+                $(".ROUTE", row).find(".label").html(ROUTE);
+                $(".ROUTE", row).find(".text").val(ROUTE);
+
+                //Bind MASTER_MODE.
+                $(".MASTER_MODE", row).find(".label").html(MASTER_MODE);
+                $(".MASTER_MODE", row).find(".text").val(MASTER_MODE);
+
+                //Bind TotalPallets.
+                $(".TotalPallets", row).find(".label").html(TotalPallets);
+                $(".TotalPallets", row).find(".text").val(TotalPallets);
+
+                //Bind TotalWeight.
+                $(".TotalWeight", row).find(".label").html(TotalWeight);
+                $(".TotalWeight", row).find(".text").val(TotalWeight);
+
+                //Bind TotalCube.
+                $(".TotalCube", row).find(".label").html(TotalCube);
+                $(".TotalCube", row).find(".text").val(TotalCube);
+
+                //Bind CapacityWeight.
+                $(".CapacityWeight", row).find(".label").html(CapacityWeight);
+                $(".CapacityWeight", row).find(".text").val(CapacityWeight);
+
+                row.find(".link").show();
+                $("#WebGrid TBODY").append(row);
+            };
+
+            //Add event handler.
+            $("body").on("click", "#btnAdd", function () {
+                var txtshipdate = $("#txtshipdate");
+                var txtroute = $("#txtroute");
+                var txtmastermode = $("#txtmastermode");
+                var txttotalpallets = $("#txttotalpallets");
+                var txttotalweight = $("#txttotalweight");
+                var txttotalcube = $("#txttotalcube");
+                var txtcapacityweight = $("#txtcapacityweight");
+
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/InsertFleetPride",
+                    data: '{ShipDate: "' + txtshipdate.val() + '", ROUTE: "' + txtroute.val() + '", MASTER_MODE: "' + txtmastermode.val() +
+                        '", TotalPallets: "' + txttotalpallets.val() + '", TotalWeight: "' + txttotalweight.val() + '", TotalCube: "' + txttotalcube.val() +
+                        '", CapacityWeight: "' + txtcapacityweight.val() + '"}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (r) {
+                        var row = $("#WebGrid TBODY tr:last-child").clone();
+                        if (row.find(".label").is(":empty")) {
+                            $("#WebGrid TBODY tr:last-child").remove();
+                        }
+                        AppendRow(row, r.Id, r.ShipDate, r.ROUTE, r.MASTER_MODE, r.TotalPallets, r.TotalWeight, r.TotalCube, r.CapacityWeight);
+
+                        txtshipdate.val("");
+                        txtroute.val("");
+                        txtmastermode.val("");
+                        txttotalpallets.val("");
+                        txttotalweight.val("");
+                        txttotalcube.val("");
+                        txtcapacityweight.val("");
+
+                    }
+                });
+            });
+
+            //Edit event handler.
+            $("body").on("click", "#WebGrid TBODY .Edit", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function () {
+                    if ($(this).find(".text").length > 0) {
+                        $(this).find(".text").show();
+                        $(this).find(".label").hide();
+                    }
+                });
+                row.find(".Update").show();
+                row.find(".Cancel").show();
+                row.find(".Delete").hide();
+                $(this).hide();
+            });
+
+            //Update event handler.
+            $("body").on("click", "#WebGrid TBODY .Update", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function () {
+                    if ($(this).find(".text").length > 0) {
+                        var span = $(this).find(".label");
+                        var input = $(this).find(".text");
+                        span.html(input.val());
+                        span.show();
+                        input.hide();
+                    }
+                });
+                row.find(".Edit").show();
+                row.find(".Delete").show();
+                row.find(".Cancel").hide();
+                $(this).hide();
+
+                var fleetpride = {};
+                fleetpride.Id = row.find(".Id").find(".label").html();
+                fleetpride.ShipDate = row.find(".ShipDate").find(".label").html();
+                fleetpride.ROUTE = row.find(".ROUTE").find(".label").html();
+                fleetpride.MASTER_MODE = row.find(".MASTER_MODE").find(".label").html();
+                fleetpride.TotalPallets = row.find(".TotalPallets").find(".label").html();
+                fleetpride.TotalWeight = row.find(".TotalWeight").find(".label").html();
+                fleetpride.TotalCube = row.find(".TotalCube").find(".label").html();
+                fleetpride.CapacityWeight = row.find(".CapacityWeight").find(".label").html();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/UpdateFleetPride",
+                    data: '{fleetpride:' + JSON.stringify(fleetpride) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+            });
+
+
+            //Cancel event handler.
+            $("body").on("click", "#WebGrid TBODY .Cancel", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function () {
+                    if ($(this).find(".text").length > 0) {
+                        var span = $(this).find(".label");
+                        var input = $(this).find(".text");
+                        input.val(span.html());
+                        span.show();
+                        input.hide();
+                    }
+                });
+                row.find(".Edit").show();
+                row.find(".Delete").show();
+                row.find(".Update").hide();
+                $(this).hide();
+            });
+
+            //Delete event handler.
+            $("body").on("click", "#WebGrid TBODY .Delete", function () {
+                if (confirm("Do you want to delete this row?")) {
+                    var row = $(this).closest("tr");
+                    var Id = row.find(".label").html();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/DeleteFleetPride",
+                        data: '{Id: ' + Id + '}',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if ($("#WebGrid TBODY tr").length == 1) {
+                                row.find(".label").html("");
+                                row.find(".text").val("");
+                                row.find(".link").hide();
+                            } else {
+                                row.remove();
+                            }
+                        }
+                    });
+                }
+            });
+
+
+          
+
+
+        </script>
+    </center>
+</body>
+</html>
